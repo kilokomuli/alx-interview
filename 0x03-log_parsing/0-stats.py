@@ -17,6 +17,7 @@ status_counts = {
 }
 line_count = 0
 
+
 def print_stats():
     """Prints the total file size and the count of each status code."""
     global total_file_size, status_counts
@@ -52,6 +53,7 @@ def signal_handler(sig, frame):
     print("\nProgram interrupted. Printing final statistics:")
     print_stats()
     sys.exit(0)
+
 
 signal.signal(signal.SIGINT, signal_handler)
 
