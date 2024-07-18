@@ -1,64 +1,41 @@
 #!/usr/bin/python3
-"""Log parsing in python"""
+"""
+Log parsing
+"""
+
 import sys
-import signal
 
+if __name__ == '__main__':
 
-total_file_size = 0
-status_counts = {
-    200: 0,
-    301: 0,
-    400: 0,
-    401: 0,
-    403: 0,
-    404: 0,
-    405: 0,
-    500: 0
-}
-line_count = 0
+    filesize, count = 0, 0
+    codes = ["200", "301", "400", "401", "403", "404", "405", "500"]
+    stats = {k: 0 for k in codes}
 
-def print_stats():
-    """Prints the total file size and the count of each status code."""
-    global total_file_size, status_counts
-    print(f"Total file size: {total_file_size}")
-    for status in sorted(status_counts.keys()):
-        if status_counts[status] > 0:
-            print(f"{status}: {status_counts[status]}")
-    print()
+    def print_stats(stats: dict, file_size: int) -> None:
+        """Prints the total file size and the count of each status code that
+        has been encountered, in ascending order of status codes."""
+        print("File size: {:d}".format(filesize))
+        for k, v in sorted(stats.items()):
+            if v:
+                print("{}: {}".format(k, v))
 
-
-def process_line(line):
-    """Process a line from a log file."""
-    global total_file_size, status_counts, line_count
-    line = line.strip()
-    parts = line.split()
-    if len(parts) != 7:
-        return
     try:
-        status_code = int(parts[5])
-        file_size = int(parts[6])
-        total_file_size += file_size
-        if status_code in status_counts:
-            status_counts[status_code] += 1
-        line_count += 1
-    except ValueError:
-        return
-    if line_count % 10 == 0:
-        print_stats()
-
-
-def signal_handler(sig, frame):
-    """Signal handler function that is called when a signal is received."""
-    print("\nProgram interrupted. Printing final statistics:")
-    print_stats()
-    sys.exit(0)
-
-signal.signal(signal.SIGINT, signal_handler)
-
-try:
-    for line in sys.stdin:
-        process_line(line)
-except KeyboardInterrupt:
-    print("\nKeyboard interruption detected. Printing final statistics:")
-    print_stats()
-    sys.exit(0)
+        for line in sys.stdin:
+            count += 1
+            data = line.split()
+            try:
+                status_code = data[-2]
+                if status_code in stats:
+                    stats[status_code] += 1
+            except BaseException:
+                pass
+            try:
+                filesize += int(data[-1])
+            except BaseException:
+                pass
+            if count % 10 == 0:
+                print_stats(stats, filesize)
+        print_stats(stats, filesize)
+    except KeyboardInterrupt:
+        print_stats(stats, filesize)
+        raise
