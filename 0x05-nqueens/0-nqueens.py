@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """solving N Queen problem using backtracking"""
 import sys
 
@@ -11,6 +11,7 @@ def is_safe(board, row, col):
            board[i] + i == col + row:
             return False
     return True
+
 
 def solve(N):
     """Checks if all queens are placed"""
@@ -28,10 +29,12 @@ def solve(N):
     place_queens(0)
     return solutions
 
+
 def print_solutions(solutions, N):
     """Prints the solutions"""
     for solution in solutions:
         print([[i, solution[i]] for i in range(N)])
+
 
 def main():
     """Main function"""
@@ -51,6 +54,7 @@ def main():
 
     solutions = solve(N)
     print_solutions(solutions, N)
+
 
 if __name__ == "__main__":
     main()
