@@ -12,10 +12,10 @@ def makeChange(coins, total):
     coins.sort(reverse=True)
     for i in coins:
         while coin < total:
-            coin += 1
+            coin += i
             tmp += 1
         if coin == total:
             return tmp
-        coin -= 1
+        coin -= i
         tmp -= 1
     return -1
